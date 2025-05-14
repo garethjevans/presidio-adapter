@@ -41,4 +41,4 @@ jobs:
 
     - name: Test with Maven
       run: |
-        ./mvnw clean test
+        ./mvnw --no-transfer-progress clean test
