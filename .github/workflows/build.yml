@@ -36,6 +36,8 @@ jobs:
       run: |
         docker pull mcr.microsoft.com/presidio-anonymizer:latest
         docker pull mcr.microsoft.com/presidio-analyzer:latest
+        docker run -d -p 5002:3000 mcr.microsoft.com/presidio-analyzer:latest
+        docker run -d -p 5001:3000 mcr.microsoft.com/presidio-anonymizer:latest
 
     - name: Test with Maven
       run: |
