@@ -52,7 +52,8 @@ public class ChatController {
                     request.toolChoice(),
                     request.parallelToolCalls(),
                     request.user(),
-                    request.reasoningEffort()));
+                    request.reasoningEffort(),
+                    request.webSearchOptions()));
         } catch (BannedElementException exp) {
             return new ResponseEntity<String>(exp.getMessage(), HttpStatus.BAD_REQUEST);
         }
