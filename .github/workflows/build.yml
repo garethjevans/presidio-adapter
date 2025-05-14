@@ -1,0 +1,44 @@
+name: Maven Build
+
+on:
+  pull_request:
+  push:
+    branches:
+    - main
+
+# Avoid concurrency over the same PR and cancel in-progress jobs when a new one is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Manually pull images to get them in the cache
+      run: |
+        docker pull mcr.microsoft.com/presidio-anonymizer:latest
+        docker pull mcr.microsoft.com/presidio-analyzer:latest
+        docker run -d -p 5002:3000 mcr.microsoft.com/presidio-analyzer:latest
+        docker run -d -p 5001:3000 mcr.microsoft.com/presidio-anonymizer:latest
+
+    - name: Test with Maven
+      run: |
+        ./mvnw --no-transfer-progress clean test
